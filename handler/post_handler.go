@@ -1,7 +1,10 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/felipematheus1337/GoPHER_Blog/dto"
+	"github.com/felipematheus1337/GoPHER_Blog/mapper"
 	"github.com/felipematheus1337/GoPHER_Blog/service"
 	"github.com/gin-gonic/gin"
 )
@@ -14,13 +17,25 @@ func NewPostHandler(service *service.PostService) *PostHandler {
 	return &PostHandler{service}
 }
 
-func (p *PostHandler) CreatePost(c *gin.Context) {
+func (p *PostHandler) CreatePost(ctx *gin.Context) {
 
 	var postDTO dto.CreatePostDTO
 
-	if err := c.ShouldBindJSON(&postDTO); err != nil {
-
+	if err := ctx.ShouldBindJSON(&postDTO); err != nil {
+		sendError(ctx, http.StatusBadRequest, err.Error())
+		return
 	}
+
+	post := mapper.ToSchema(postDTO)
+
+	response, err := p.service.CreatePost(post)
+
+	if err != nil {
+		sendError(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, response)
 
 }
 
