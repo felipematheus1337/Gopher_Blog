@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/felipematheus1337/GoPHER_Blog/dto"
 	"github.com/felipematheus1337/GoPHER_Blog/mapper"
@@ -24,6 +25,14 @@ func (p *PostHandler) CreatePost(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&postDTO); err != nil {
 		sendError(ctx, http.StatusBadRequest, err.Error())
 		return
+	}
+
+	errValidate := postDTO.Validate()
+
+	if errValidate != nil {
+		msgErro := errValidate.Error()
+		errStrings := strings.Split(msgErro, ",")
+		ErrParamIsRequired(errStrings[0], errStrings[1])
 	}
 
 	post := mapper.ToSchema(postDTO)
