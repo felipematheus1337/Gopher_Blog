@@ -35,7 +35,7 @@ func (p *PostHandler) CreatePost(ctx *gin.Context) {
 		ErrParamIsRequired(errStrings[0], errStrings[1])
 	}
 
-	post := mapper.ToSchema(postDTO)
+	post := mapper.CreateToSchema(postDTO)
 
 	response, err := p.service.CreatePost(post)
 
@@ -48,7 +48,23 @@ func (p *PostHandler) CreatePost(ctx *gin.Context) {
 
 }
 
-func (p *PostHandler) EditPost(context *gin.Context) {
+func (p *PostHandler) EditPost(ctx *gin.Context) {
+
+	request := dto.UpdatePostDTO{}
+
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		sendError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	id, isValid := GetIdFromQuery(ctx)
+
+	if !isValid {
+		sendError(ctx, http.StatusBadRequest, "Id inválido.")
+		return
+	}
+
+	p.service.UpdatePost(id, &request)
 
 }
 

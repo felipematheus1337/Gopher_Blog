@@ -15,6 +15,13 @@ type CreatePostDTO struct {
 	Tags      pq.StringArray `json:"tags"`
 }
 
+type UpdatePostDTO struct {
+	Title  string         `json:"title"`
+	Body   string         `json:"body"`
+	Tags   pq.StringArray `json:"tags"`
+	Author string         `json:"author"`
+}
+
 func (d *CreatePostDTO) Validate() error {
 	// Validações
 	if d.Title == "" {
@@ -42,5 +49,21 @@ func (d *CreatePostDTO) Validate() error {
 		d.Published = &falso
 	}
 
+	return nil
+}
+
+func (u *UpdatePostDTO) Validate() error {
+	if u.Title == "" {
+		return errors.New(fmt.Sprintf(" 'title', 'string'"))
+	}
+	if u.Body == "" {
+		return errors.New(fmt.Sprintf(" 'body', 'string'"))
+	}
+	if u.Tags == nil {
+		u.Tags = pq.StringArray{}
+	}
+	if u.Author == "" {
+		return errors.New(fmt.Sprintf(" 'author', 'string'"))
+	}
 	return nil
 }
