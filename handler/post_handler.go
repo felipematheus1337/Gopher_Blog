@@ -100,7 +100,48 @@ func (p *PostHandler) PublishPost(ctx *gin.Context) {
 	sendSuccess(ctx, "Post atualizado com sucesso", id, http.StatusNoContent)
 }
 
-func (p *PostHandler) ListPosts(context *gin.Context) {
+func (p *PostHandler) ListPosts(ctx *gin.Context) {
+
+	published := ctx.DefaultQuery("published", "")
+	author := ctx.DefaultQuery("author", "")
+	tag := ctx.DefaultQuery("tag", "")
+	search := ctx.DefaultQuery("search", "")
+	page := ctx.DefaultQuery("page", "1") // Página padrão é 1
+	limit := ctx.DefaultQuery("limit", "10")
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil || pageInt <= 0 {
+		pageInt = 1
+	}
+
+	limitInt, err := strconv.Atoi(limit)
+	if err != nil || limitInt <= 0 {
+		limitInt = 10
+	}
+
+	var publishedBool *bool
+	if published != "" {
+		b, err := strconv.ParseBool(published)
+		if err != nil {
+			sendError(ctx, http.StatusBadRequest, "Parâmetro 'published' inválido")
+			return
+		}
+		publishedBool = &b
+	}
+
+	posts, total, err := p.service.ListPosts(publishedBool, author, tag, search, pageInt, limitInt)
+	if err != nil {
+		sendError(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	sendSuccess(ctx, "list-posts",
+		gin.H{"data": posts,
+			"total":       total,
+			"page":        pageInt,
+			"limit":       limitInt,
+			"total_pages": (total + int64(limitInt) - 1) / int64(limitInt)},
+		http.StatusOK)
 
 }
 

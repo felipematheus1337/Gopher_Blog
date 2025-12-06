@@ -160,3 +160,39 @@ func (s PostService) DeletePost(id string) error {
 
 	return nil
 }
+
+func (s *PostService) ListPosts(published *bool, author, tag, search string, page, limit int) ([]schemas.Post, int64, error) {
+	var posts []schemas.Post
+	var total int64
+
+	query := s.db.Model(&schemas.Post{})
+
+	if published != nil && *published {
+		query = query.Where("published = ?", *published)
+	}
+
+	if author != "" {
+		query = query.Where("author = ?", author)
+	}
+
+	if tag != "" {
+		query = query.Where("tags @> ?", fmt.Sprintf(`{"%s"}`, tag))
+	}
+
+	if search != "" {
+		query = query.Where("title LIKE ? OR body LIKE ?", "%"+search+"%", "%"+search+"%")
+	}
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * limit
+	query = query.Offset(offset).Limit(limit)
+
+	if err := query.Find(&posts).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return posts, total, nil
+}
