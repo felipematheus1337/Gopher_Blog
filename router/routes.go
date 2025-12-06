@@ -7,7 +7,7 @@ import (
 	"github.com/swaggo/swag/example/override/docs"
 )
 
-func initializeRoutes(router *gin.Engine, p *handler.PostHandler) {
+func InitializeRoutes(router *gin.Engine, p *handler.PostHandler) {
 
 	basePath := "/api/v1/posts"
 
