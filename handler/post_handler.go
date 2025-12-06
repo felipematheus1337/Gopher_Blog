@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/felipematheus1337/GoPHER_Blog/dto"
 	"github.com/felipematheus1337/GoPHER_Blog/service"
 	"github.com/gin-gonic/gin"
 )
@@ -14,6 +15,12 @@ func NewPostHandler(service *service.PostService) *PostHandler {
 }
 
 func (p *PostHandler) CreatePost(c *gin.Context) {
+
+	var postDTO dto.CreatePostDTO
+
+	if err := c.ShouldBindJSON(&postDTO); err != nil {
+
+	}
 
 }
 
