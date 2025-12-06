@@ -1,8 +1,10 @@
 package service
 
 import (
+	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/felipematheus1337/GoPHER_Blog/dto"
 	"github.com/felipematheus1337/GoPHER_Blog/schemas"
@@ -92,4 +94,47 @@ func (s *PostService) getById(id uint) *schemas.Post {
 
 	return &post
 
+}
+
+func (s PostService) FindById(id string) (*schemas.PostResponse, error) {
+	idInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		log.Fatal("Error while parsing post id")
+	}
+
+	schemasPost := s.getById(uint(idInt))
+
+	return &schemas.PostResponse{
+		ID:        schemasPost.ID,
+		CreatedAt: schemasPost.CreatedAt,
+		UpdatedAt: schemasPost.UpdatedAt,
+		DeletedAt: schemasPost.DeletedAt,
+		Author:    schemasPost.Author,
+		Tags:      schemasPost.Tags,
+		Title:     schemasPost.Title,
+		Body:      schemasPost.Body,
+		Published: *schemasPost.Published,
+	}, nil
+}
+
+func (s *PostService) PublishPost(id string, published bool) error {
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		return fmt.Errorf("erro ao converter o ID do post: %v", err)
+	}
+
+	post := s.getById(uint(idInt))
+	if post == nil {
+		return fmt.Errorf("post com ID %d não encontrado", idInt)
+	}
+
+	post.Published = &published
+	post.UpdatedAt = time.Now()
+	
+	if err := s.db.Save(post).Error; err != nil {
+		return fmt.Errorf("erro ao salvar o post: %v", err)
+	}
+
+	return nil
 }
