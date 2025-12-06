@@ -1,150 +1,96 @@
-📝 GopherBlog
+# GopherBlog 🐹
 
-Uma API simples de blog construída com Go, Gin, Gorm e PostgreSQL.
-O objetivo é oferecer uma estrutura limpa, didática e próxima do que empresas usam, seguindo as camadas routes → handler → service → db, com documentação via Swagger.
+[![Go version](https://img.shields.io/badge/go-1.XX-blue)]()  
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)]()
 
-🚀 Objetivo do Projeto
+> **GopherBlog** é uma API RESTful de blog — feita com Go, Gin, Gorm e PostgreSQL — projetada para ser simples, organizada e escalável desde o início.  
 
-O GopherBlog é um CRUD de posts com foco em boas práticas:
+---
 
-Organização em camadas
+## 📌 Visão Geral
 
-Validações no handler
+GopherBlog oferece um backend minimalista para gerenciamento de posts: criação, edição, publicação, listagem com filtros, paginação e remoção.  
+A estrutura foi pensada para reproduzir boas práticas corporativas, mesmo em um projeto simples, seguindo a arquitetura:
 
-Regras de negócio no service
 
-Persistência com Gorm
+Com isso, o código fica limpo, modular e fácil de evoluir — ideal para portfólios ou base de um sistema real.
 
-Filtros reais (por autor, tag, busca e estado publicado)
+---
 
-Ponto de entrada simples e escalável
+## ✅ Funcionalidades Principais
 
-Ideal para quem está aprendendo Go e quer um projeto profissional, mas sem relações complexas entre tabelas.
+- Criar post (rascunho)  
+- Editar post  
+- Publicar / despublicar post  
+- Listar posts com filtros (por autor, tag, estado, busca full-text)  
+- Paginação (page / limit)  
+- Buscar post por ID  
+- Deletar post  
 
-🧱 Entidade Principal
-Post
-Campo	Tipo	Descrição
-id	int/uuid	Identificador único
-title	string	Título do post
-body	string	Conteúdo do post
-author	string	Nome simples do autor
-tags	string	Lista de tags em formato simples
-published	bool	Indica se o post está publicado
-createdAt	datetime	Data de criação
-updatedAt	datetime	Data de atualização
-🎯 Casos de Uso
-✔ Criar post
+---
 
-Cria um post em rascunho (published = false por padrão).
+## 🧱 Modelo de Dados
 
-✔ Editar post
+**Post**
 
-Atualiza título, conteúdo, tags e autor.
+| Campo       | Tipo        | Descrição                          |
+|-------------|-------------|------------------------------------|
+| `id`        | UUID / int  | Identificador único                |
+| `title`     | string      | Título do post                     |
+| `body`      | string      | Conteúdo do post                   |
+| `author`    | string      | Nome simples do autor              |
+| `tags`      | []string    | Tags associadas (opcional)         |
+| `published` | bool        | Indica se está publicado ou rascunho |
+| `createdAt` | datetime    | Data/hora de criação               |
+| `updatedAt` | datetime    | Data/hora da última atualização    |
 
-✔ Publicar post
+---
 
-Altera o estado para publicado caso a validação permita.
+## 🔐 Validações & Regras de Negócio
 
-✔ Despublicar post
+- `title`: obrigatório, máximo 120 caracteres, não vazio  
+- `body`: obrigatório, mínimo 10 caracteres  
+- `author`: obrigatório, máximo 60 caracteres  
+- `tags`: opcional — até 5 tags, cada uma até 20 caracteres  
+- Publicação só é permitida se `title` e `body` forem válidos  
+- Não permitir publicar um post já publicado  
 
-Retorna o post para rascunho.
+---
 
-✔ Listar posts
+## 📦 Tecnologias & Ferramentas
 
-Permite filtros opcionais:
+- **Go** – linguagem do backend  
+- **Gin** – framework HTTP  
+- **Gorm** – ORM para acesso a banco  
+- **PostgreSQL** – banco relacional  
+- **Swagger (OpenAPI)** – documentação da API  
+- **Docker / docker-compose** – para facilitar setup local  
 
-published=true/false
+---
 
-author=nome
+## 🚀 Como Rodar Localmente
 
-tag=go
+> ⚠️ Presume que você já tem Go e Docker instalados.
 
-search=palavra
+```bash
+# clone o repositório  
+git clone https://github.com/felipematheus1337/Gopher_Blog.git  
+cd Gopher_Blog  
 
-page e limit para paginação
+# (opcional) configuração de ambiente  
+cp .env.example .env  
+# edite variáveis se necessário (DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME, etc.)
 
-✔ Buscar post por ID
+# subir o banco + serviço via Docker  
+docker-compose up --build  
 
-Retorna um único post.
+A API estará disponível em http://localhost:8080 por padrão.
+Endpoints e documentação podem ser acessados via Swagger (ex: http://localhost:8080/swagger/index.html).
 
-✔ Excluir post
+📄 Licença
 
-Remove definitivamente.
+Licenciado sob os termos da MIT License. Veja o arquivo LICENSE
+ para mais detalhes.
 
-🔍 Validações Importantes
-title
-
-obrigatório
-
-máximo 120 caracteres
-
-não pode ser vazio ou espaços
-
-body
-
-obrigatório
-
-mínimo 10 caracteres
-
-author
-
-obrigatório
-
-até 60 caracteres
-
-tags
-
-opcional
-
-máximo 5 tags
-
-cada tag com até 20 caracteres
-
-publicação
-
-só publica se title e body forem válidos
-
-não publica se já estiver publicado
-
-🧩 Arquitetura
-/routes      → registra endpoints  
-/handler     → recebe requisição, valida dados, chama o service  
-/service     → regras de negócio (publicar, filtrar, etc.)  
-/db          → camada de persistência com Gorm
-
-
-Separação simples e muito usada em empresas. Fácil de manter e evoluir.
-
-📚 Tecnologias
-
-Go
-
-Gin Framework
-
-Gorm ORM
-
-PostgreSQL
-
-Swagger (OpenAPI)
-
-Docker (opcional para subir o banco)
-
-📌 Próximos Passos (opcional)
-
-Sistema de autores real (segunda tabela)
-
-Comentários
-
-Likes
-
-Autenticação JWT
-
-Middleware de logs
-
-Cache (Redis)
-
-Paginação avançada
-
-Pré-visualização de markdown
-
-🐹 GopherBlog — simples hoje, escalável amanhã.
+# ou (alternativa) rodar diretamente com Go  
+go run main.go  
