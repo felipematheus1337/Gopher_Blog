@@ -1,0 +1,32 @@
+# Arquivos binários gerados
+/bin/
+/obj/
+
+.env
+
+# Arquivos de dependência do Go
+/vendor/
+/Gopkg.lock
+/Gopkg.toml
+/go.sum
+/go.mod
+
+# Arquivos de build temporários
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Arquivos de IDEs/Editor
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# Arquivos temporários do Go
+*.log
+*.out
+*.tmp
