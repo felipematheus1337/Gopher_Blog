@@ -3,6 +3,7 @@ package schemas
 import (
 	"time"
 
+	"github.com/lib/pq"
 	_ "gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -13,7 +14,7 @@ type Post struct {
 	Body      string
 	Published *bool
 	Author    string
-	Tags      []string
+	Tags      pq.StringArray `gorm:"type:text[]"`
 }
 
 type PostResponse struct {
