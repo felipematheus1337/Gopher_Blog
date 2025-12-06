@@ -45,7 +45,7 @@ func (p *PostHandler) CreatePost(ctx *gin.Context) {
 		return
 	}
 
-	sendSucess(ctx, "create-post", response, http.StatusCreated)
+	sendSuccess(ctx, "create-post", response, http.StatusCreated)
 
 }
 
@@ -72,7 +72,7 @@ func (p *PostHandler) EditPost(ctx *gin.Context) {
 		return
 	}
 
-	sendSucess(ctx, "update-post", response, http.StatusOK)
+	sendSuccess(ctx, "update-post", response, http.StatusOK)
 
 }
 
@@ -119,9 +119,24 @@ func (p *PostHandler) GetPostById(ctx *gin.Context) {
 		return
 	}
 
-	sendSucess(ctx, "get-post", response, http.StatusOK)
+	sendSuccess(ctx, "get-post", response, http.StatusOK)
 }
 
 func (p *PostHandler) DeletePost(ctx *gin.Context) {
+	id, isValid := GetIdFromQuery(ctx)
+
+	if !isValid {
+		sendError(ctx, http.StatusBadRequest, "ID inválido")
+		return
+	}
+
+	err := p.service.DeletePost(id)
+
+	if err != nil {
+		sendError(ctx, http.StatusInternalServerError, "Error deleting post.")
+		return
+	}
+
+	sendSuccess(ctx, "Post deletado com sucesso.", id, http.StatusOK)
 
 }

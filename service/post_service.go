@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -131,8 +132,29 @@ func (s *PostService) PublishPost(id string, published bool) error {
 
 	post.Published = &published
 	post.UpdatedAt = time.Now()
-	
+
 	if err := s.db.Save(post).Error; err != nil {
+		return fmt.Errorf("erro ao salvar o post: %v", err)
+	}
+
+	return nil
+}
+
+func (s PostService) DeletePost(id string) error {
+
+	idInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		return fmt.Errorf("erro ao converter o ID do post: %v", err)
+	}
+
+	post := s.getById(uint(idInt))
+
+	if post == nil {
+		return errors.New("post não encontrado.")
+	}
+
+	if err := s.db.Delete(post).Error; err != nil {
 		return fmt.Errorf("erro ao salvar o post: %v", err)
 	}
 
