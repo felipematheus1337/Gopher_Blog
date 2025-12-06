@@ -37,5 +37,10 @@ func (d *CreatePostDTO) Validate() error {
 		d.Tags = pq.StringArray{}
 	}
 
+	if d.Published == nil {
+		var falso = false
+		d.Published = &falso
+	}
+
 	return nil
 }

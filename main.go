@@ -28,8 +28,6 @@ func main() {
 		port = ":8080"
 	}
 
-	r.Run(":" + port)
-
 	db, err := config.InitializePostgres()
 
 	if err != nil {
@@ -41,5 +39,7 @@ func main() {
 	handler := handler2.NewPostHandler(services)
 
 	router.InitializeRoutes(r, handler)
+
+	r.Run(port)
 
 }

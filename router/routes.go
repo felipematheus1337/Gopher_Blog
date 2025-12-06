@@ -22,19 +22,13 @@ func InitializeRoutes(router *gin.Engine, p *handler.PostHandler) {
 func RegisterPostRoutes(v1 *gin.RouterGroup, p *handler.PostHandler) {
 
 	{
-		v1.POST(v1.BasePath(), p.CreatePost)
-
-		v1.PUT(v1.BasePath(), p.EditPost)
-
-		v1.POST(v1.BasePath()+"/publish", p.PublishPost)
-
-		v1.PATCH(v1.BasePath()+"/unpublish", p.UnpublishPost)
-
-		v1.GET(v1.BasePath(), p.ListPosts)
-
-		v1.GET(v1.BasePath()+"/show", p.GetPostById)
-
-		v1.DELETE(v1.BasePath(), p.DeletePost)
+		v1.POST("/", p.CreatePost)              // POST /api/v1/posts
+		v1.PUT("/", p.EditPost)                 // PUT /api/v1/posts
+		v1.POST("/publish", p.PublishPost)      // POST /api/v1/posts/publish
+		v1.PATCH("/unpublish", p.UnpublishPost) // PATCH /api/v1/posts/unpublish
+		v1.GET("/", p.ListPosts)                // GET /api/v1/posts
+		v1.GET("/show", p.GetPostById)          // GET /api/v1/posts/show
+		v1.DELETE("/", p.DeletePost)
 
 	}
 }
